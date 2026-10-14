@@ -5,7 +5,7 @@ while True:
     try:
         velg_årstall = int(input("Årstall 2014-2025: ")) #velge årastall
         if 2014 <= velg_årstall <= 2025:            #sjekker om årstall er innafor
-            break                                #stopper om ikkje rett årstall
+            break                                #avsluttar løkka når brukaren har skrive eit gyldig årstal
         print("Velg eit år mellom 2014 og 2025.")
     except ValueError:
         print("Skriv inn eit gyldig heiltal.")
@@ -14,15 +14,15 @@ antall_skidager = 0        #oppretter teller for skidagene
 
 try:        #opne fila
     with open("sinnes_2014_2025.csv", newline="", encoding="utf-8") as fil:
-        leser = csv.reader(fil, delimiter=";")
+        leser = csv.reader(fil, delimiter=";")        #deler opp fila i kolonne
         next(leser, None)  # skippa overskrift
 
-        for rad in leser:
-            if len(rad) <= 6 or not rad[6].strip():
+        for rad in leser:            #går gjennom radane
+            if len(rad) <= 6 or not rad[6].strip():    #sjekka om radene har nok kolonne
                 continue
 
             try:
-                dato = datetime.strptime(rad[2].strip(), "%Y.%m.%d")
+                dato = datetime.strptime(rad[2].strip(), "%Y.%m.%d")  #dato i andre rad på format år.mnd.dag
             except (ValueError, IndexError):
                 continue
 
@@ -30,9 +30,9 @@ try:        #opne fila
             månad = dato.month
 
             # handle comma decimal like '12,3'
-            snøtekst = rad[6].strip().replace(",", ".")  #handtere verdier sjølv om komma brukt
+            snøtekst = rad[6].strip().replace(",", ".")  #handtere snødybd verdier sjølv om komma brukt
             try:
-                snødybd = float(snøtekst)
+                snødybd = float(snøtekst)        #laga om til talverdi (ikkje tekst) slik den kan handterast
             except ValueError:
                 continue
 
@@ -41,7 +41,7 @@ try:        #opne fila
                 if snødybd >= 20:
                     antall_skidager += 1            #adda skidag om snødybd er over 20 elr 20
 
-    print(f"det var {antall_skidager} dagar med skiføre")
+    print(f"det var {antall_skidager} dagar med skiføre")        #printer svartekst
     print(f"i skisesongen {velg_årstall - 1}/{velg_årstall}")
 
 except FileNotFoundError:
