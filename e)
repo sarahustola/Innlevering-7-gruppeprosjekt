@@ -1,0 +1,28 @@
+import csv
+from datetime import datetime
+
+velg_årstall = int(input("Årstall 2014-2025:"))
+
+antall_skidager = 0
+
+try:
+    with open ("sinnes_2014_2025.csv", encoding="utf-8") as fil:
+        leser = csv.reader (fil, delimiter= ";")
+
+        for rad in reader:
+            if rad [6]== "":
+                continue
+
+            dato = datetime.strptime (rad[2],"%Y.%m.%d")
+            år = dato.year
+            månad = dato.month
+            snødybd = float (rad[6])
+
+            if ((år== velg_årstall -1 and månad >= 11)or (år == velg_årstall and månad <= 5)):
+                if snødybd >= 20:
+                    antall_skidager+= 1
+
+        print (f"det var {antall_skidager} dagar med skiføre")
+        print (f"i skisesongen {velg_årstall-1}/{velg_årstall}")
+except FileNotFoundError:
+    print ("fant ikkje filen")
