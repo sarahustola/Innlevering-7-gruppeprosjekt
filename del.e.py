@@ -1,0 +1,51 @@
+import csv
+from datetime import datetime
+from pathlib import Path
+
+FILNAVN = Path(__file__).with_name("sinnes_2014_2025.csv")
+
+while True:  
+    try:
+        velg_årstall = int(input("Årstall 2015-2025: ")) #velge årastall
+        if 2015 <= velg_årstall <= 2025:            #sjekker om årstall er innafor
+            break                                #avsluttar løkka når brukaren har skrive eit gyldig årstal
+        print("Velg eit år mellom 2015 og 2025.")
+    except ValueError:
+        print("Skriv inn eit gyldig heiltal.")
+
+antall_skidager = 0        #oppretter teller for skidagene
+
+try:        #opne fila
+    with FILNAVN.open(newline="", encoding="utf-8-sig") as fil:
+        leser = csv.reader(fil, delimiter=";")        #deler opp fila i kolonne
+        next(leser, None)  # skippa overskrift
+
+        for rad in leser:            #går gjennom radane
+            if len(rad) <= 6 or not rad[6].strip():    #sjekka om radene har nok kolonne
+                continue
+
+            try:
+                dato = datetime.strptime(rad[2].strip(), "%d.%m.%Y")  # dato i format dag.måned.år
+            except (ValueError, IndexError):
+                continue
+
+            år = dato.year
+            månad = dato.month
+
+            # handle comma decimal like '12,3'
+            snøtekst = rad[6].strip().replace(",", ".")  #handtere snødybd verdier sjølv om komma brukt
+            try:
+                snødybd = float(snøtekst)        #laga om til talverdi (ikkje tekst) slik den kan handterast
+            except ValueError:
+                continue
+
+            if ((år == velg_årstall - 1 and månad >= 11) or        #skisesong frå nov året før
+                (år == velg_årstall and månad <= 5)):        #til mai det året
+                if snødybd >= 20:
+                    antall_skidager += 1            #adda skidag om snødybd er over 20 elr 20
+
+    print(f"det var {antall_skidager} dagar med skiføre")        #printer svartekst
+    print(f"i skisesongen {velg_årstall - 1}/{velg_årstall}")
+
+except FileNotFoundError:
+    print("fant ikkje filen")
