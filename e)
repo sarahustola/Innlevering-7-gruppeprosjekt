@@ -1,3 +1,12 @@
+import os
+from pathlib import Path
+
+print("cwd:", os.getcwd())
+print("files in cwd:", os.listdir("."))
+p = Path("sinnes_2014_2025.csv")
+print("exists:", p.exists())
+print("absolute path I'd try:", p.resolve() if p.exists() else p.absolute())
+
 import csv
 from datetime import datetime
 
